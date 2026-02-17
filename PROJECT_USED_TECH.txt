@@ -1,0 +1,42 @@
+Project Used Technologies (Student Notes)
+
+This project is made with these tools and technologies:
+
+1. HTML5
+- I used HTML for all page structure.
+
+2. Tailwind CSS (CDN)
+- I used Tailwind utility classes for responsive UI and mobile app style layout.
+
+3. JavaScript (Vanilla JS)
+- I wrote the frontend logic in plain JavaScript (no React/Vue).
+- It handles login, dashboard updates, modals, table rendering, and API calls.
+
+4. Node.js (Serverless API)
+- Backend API is in `api/db.js`.
+- It supports GET and POST for app data.
+
+5. Supabase
+- I used Supabase as cloud database.
+- Data is stored in table: `public.app_state`.
+- The backend connects with `@supabase/supabase-js`.
+
+6. SQL
+- I used SQL schema file (`supabase/schema.sql`) to create table and seed initial data.
+
+7. Vercel
+- Project is deployed on Vercel.
+- Local dev also runs with `vercel dev`.
+
+8. npm
+- I used npm for dependency management and scripts.
+
+9. Environment Variables
+- `.env.local` is used for Supabase keys and URL.
+
+10. Extra UI Libraries
+- Remix Icon for icons.
+- Google Fonts (Plus Jakarta Sans) for typography.
+
+Short Summary:
+This is a full-stack student project with static frontend + serverless Node.js API + Supabase database, deployed on Vercel.
