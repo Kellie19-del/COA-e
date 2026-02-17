@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COA-e | Monitoring System</title>
+    <link rel="icon" href="data:,">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        .nav-item.active {
+            background: #b91c1c;
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 text-slate-900">
+    <div id="app" class="min-h-screen">
+        <section id="authScreen" class="min-h-screen grid place-items-center p-4">
+            <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl border border-slate-200">
+                <div class="mb-8 text-center">
+                    <div class="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-xl bg-blue-950 text-white text-2xl">
+                        <i class="ri-shield-check-fill"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold">COA-e</h1>
+                    <p class="text-sm text-slate-500">Enterprise Compliance Monitor</p>
+                </div>
+
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="mb-1 block text-sm font-semibold text-slate-700"><i class="ri-user-line"></i> Account ID</label>
+                        <input type="text" id="loginUsername" placeholder="Enter Unit Name or Admin" required
+                            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-sm font-semibold text-slate-700"><i class="ri-lock-password-line"></i> Password</label>
+                        <div class="relative">
+                            <input type="password" id="loginPassword" placeholder="••••••••" required
+                                class="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 text-sm outline-none focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
+                            <button type="button" class="password-toggle absolute inset-y-0 right-3 text-slate-500" data-target="loginPassword" aria-label="Show password">
+                                <i class="ri-eye-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full rounded-xl bg-blue-950 px-4 py-3 font-semibold text-white transition hover:bg-blue-900">
+                        <i class="ri-login-box-line"></i> Access Dashboard
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="dashboardScreen" class="hidden min-h-screen">
+            <div class="min-h-screen lg:flex">
+            <aside class="hidden w-full lg:block lg:w-72 bg-slate-900 text-slate-100 p-4 lg:p-6 lg:sticky lg:top-0 lg:h-screen">
+                <div class="mb-6 flex items-center gap-3">
+                    <div class="grid h-10 w-10 place-items-center rounded-lg bg-red-700 text-white text-lg">
+                        <i class="ri-shield-check-fill"></i>
+                    </div>
+                    <span class="text-xl font-bold">COA-e</span>
+                </div>
+
+                <nav class="space-y-4">
+                    <div class="space-y-1">
+                        <p class="mb-2 text-xs uppercase tracking-wider text-slate-400">Main Menu</p>
+                        <a href="#" class="nav-item active flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800" data-view="section-overview">
+                            <i class="ri-dashboard-line"></i> Overview
+                        </a>
+                        <a href="#" class="nav-item flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800" data-view="section-reports">
+                            <span><i class="ri-file-list-3-line"></i> Reports</span>
+                            <span class="badge bg-red-700 text-white" id="pendingCountBadge">0</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800" data-view="section-inbox" id="inboxTrigger">
+                            <span><i class="ri-mail-line"></i> Inbox</span>
+                            <span class="badge bg-red-700 text-white hidden" id="notifBadge">0</span>
+                        </a>
+                    </div>
+
+                    <div class="space-y-1 hidden" id="adminNavSection">
+                        <p class="mb-2 text-xs uppercase tracking-wider text-slate-400">Administration</p>
+                        <a href="#" class="nav-item flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800" data-view="section-audit">
+                            <i class="ri-history-line"></i> Audit Logs
+                        </a>
+                        <a href="#" class="nav-item flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800" data-view="section-units">
+                            <i class="ri-building-line"></i> Units Mgmt
+                        </a>
+                    </div>
+                </nav>
+
+                <div class="mt-8 rounded-xl bg-slate-800 p-3">
+                    <div>
+                        <p class="font-semibold">COA User</p>
+                        <p class="text-xs text-slate-400">Signed in</p>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="flex-1 p-4 pb-24 lg:p-8 lg:pb-8">
+                <header class="mb-6 rounded-2xl bg-white p-4 shadow-sm border border-slate-200">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 id="pageTitle" class="text-lg font-bold lg:text-xl">Dashboard Overview</h2>
+                        <button id="logoutBtn" class="rounded-lg border border-slate-300 bg-white p-2 text-slate-700 hover:bg-slate-50">
+                            <i class="ri-logout-box-r-line"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="grid h-9 w-9 place-items-center rounded-lg bg-red-700 text-white text-base">
+                                <i class="ri-user-3-fill"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold" id="displayName">Loading...</p>
+                                <p class="text-xs text-slate-500" id="displayRole">...</p>
+                            </div>
+                        </div>
+                        <div id="currentDate" class="text-xs text-slate-500 lg:text-sm">Mon, 15 Feb 2026</div>
+                    </div>
+                </header>
+
+                <div class="space-y-6">
+                    <section id="section-overview" class="view-section">
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                                <p class="text-sm text-slate-500">Total Reports</p>
+                                <h3 class="text-2xl font-bold" id="statTotal">0</h3>
+                            </div>
+                            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                                <p class="text-sm text-slate-500">Pending Action</p>
+                                <h3 class="text-2xl font-bold" id="statPending">0</h3>
+                            </div>
+                            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                                <p class="text-sm text-slate-500">Compliant</p>
+                                <h3 class="text-2xl font-bold" id="statCompleted">0</h3>
+                            </div>
+                            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                                <p class="text-sm text-slate-500">Messages</p>
+                                <h3 class="text-2xl font-bold" id="statMessages">0</h3>
+                            </div>
+                        </div>
+
+                        <div id="adminControls" class="hidden mt-6 grid gap-4 xl:grid-cols-2">
+                            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+                                <h3 class="font-bold"><i class="ri-add-circle-line"></i> Assign New Requirement</h3>
+                                <div>
+                                    <label class="mb-1 block text-sm font-medium">Target Unit</label>
+                                    <select id="reportUnitSelect" class="w-full rounded-lg border border-slate-300 px-3 py-2"></select>
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-sm font-medium">Due Date</label>
+                                    <input type="date" id="reportDueDate" class="w-full rounded-lg border border-slate-300 px-3 py-2">
+                                </div>
+                                <button id="addReportBtn" class="rounded-lg bg-blue-950 px-4 py-2 font-semibold text-white hover:bg-blue-900">Assign</button>
+                            </div>
+
+                            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+                                <h3 class="font-bold"><i class="ri-notification-badge-line"></i> Broadcast / Reminder</h3>
+                                <div>
+                                    <label class="mb-1 block text-sm font-medium">Recipient</label>
+                                    <select id="reminderUnitSelect" class="w-full rounded-lg border border-slate-300 px-3 py-2"></select>
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-sm font-medium">Notice Content</label>
+                                    <input type="text" id="reminderMessage" placeholder="Urgent compliance notice..." class="w-full rounded-lg border border-slate-300 px-3 py-2">
+                                </div>
+                                <button id="sendReminderBtn" class="rounded-lg bg-red-700 px-4 py-2 font-semibold text-white hover:bg-red-800">Alert</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="section-reports" class="view-section hidden">
+                        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead class="border-b border-slate-200 text-left text-slate-500">
+                                    <tr>
+                                        <th class="px-2 py-2">ID Ref</th>
+                                        <th class="px-2 py-2">Unit</th>
+                                        <th class="px-2 py-2">Deadline</th>
+                                        <th class="px-2 py-2">Status</th>
+                                        <th class="px-2 py-2">Docs</th>
+                                        <th class="px-2 py-2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportsBody"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section id="section-inbox" class="view-section hidden">
+                        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <h3 class="mb-3 font-bold"><i class="ri-discuss-line"></i> Communication Feed</h3>
+                            <div class="grid gap-3" id="inboxList"></div>
+                        </div>
+                    </section>
+
+                    <section id="section-audit" class="view-section hidden">
+                        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <h3 class="mb-3 font-bold"><i class="ri-spy-line"></i> System Audit Trail</h3>
+                            <div class="grid gap-3" id="auditLogList"></div>
+                        </div>
+                    </section>
+
+                    <section id="section-units" class="view-section hidden">
+                        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm overflow-x-auto">
+                            <div class="mb-4 flex items-center justify-between">
+                                <h3 class="font-bold"><i class="ri-community-line"></i> Registered Units</h3>
+                                <button id="openAddUnitModal" class="rounded-lg bg-blue-950 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-900">
+                                    <i class="ri-user-add-line"></i> Add New Unit
+                                </button>
+                            </div>
+                            <table class="min-w-full text-sm">
+                                <thead class="border-b border-slate-200 text-left text-slate-500">
+                                    <tr>
+                                        <th class="px-2 py-2">Unit Name</th>
+                                        <th class="px-2 py-2">Role</th>
+                                        <th class="px-2 py-2">Status</th>
+                                        <th class="px-2 py-2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unitsBody"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </main>
+            </div>
+
+            <nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 px-2 py-2 backdrop-blur lg:hidden">
+                <div class="grid grid-cols-5 gap-1">
+                    <a href="#" class="nav-item active flex flex-col items-center justify-center rounded-lg px-2 py-2 text-[11px] font-semibold text-slate-700" data-view="section-overview">
+                        <i class="ri-dashboard-line text-base"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#" class="nav-item flex flex-col items-center justify-center rounded-lg px-2 py-2 text-[11px] font-semibold text-slate-700" data-view="section-reports">
+                        <i class="ri-file-list-3-line text-base"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="#" class="nav-item flex flex-col items-center justify-center rounded-lg px-2 py-2 text-[11px] font-semibold text-slate-700" data-view="section-inbox">
+                        <i class="ri-mail-line text-base"></i>
+                        <span>Inbox</span>
+                    </a>
+                    <a href="#" class="nav-item admin-only hidden flex flex-col items-center justify-center rounded-lg px-2 py-2 text-[11px] font-semibold text-slate-700" data-view="section-audit">
+                        <i class="ri-history-line text-base"></i>
+                        <span>Audit</span>
+                    </a>
+                    <a href="#" class="nav-item admin-only hidden flex flex-col items-center justify-center rounded-lg px-2 py-2 text-[11px] font-semibold text-slate-700" data-view="section-units">
+                        <i class="ri-building-line text-base"></i>
+                        <span>Units</span>
+                    </a>
+                </div>
+            </nav>
+        </section>
+
+        <div id="toastContainer" class="fixed bottom-4 right-4 z-[60] grid gap-2"></div>
+    </div>
+
+    <div id="docModal" class="hidden fixed inset-0 z-50 grid place-items-center bg-slate-900/50 p-4">
+        <div class="w-full max-w-4xl rounded-2xl bg-white shadow-2xl border border-slate-200">
+            <div class="flex items-center justify-between border-b border-slate-200 p-4">
+                <h3 id="docModalTitle" class="font-bold"><i class="ri-file-text-line"></i> Document Viewer</h3>
+                <button id="closeDocModal" class="rounded-lg border border-slate-300 p-2"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="p-4">
+                <div id="docModalContent"></div>
+            </div>
+            <div class="flex items-center justify-end gap-2 border-t border-slate-200 p-4">
+                <button id="closeDocFooterBtn" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold">Close</button>
+                <a id="docDownloadLink" class="rounded-lg bg-blue-950 px-4 py-2 text-sm font-semibold text-white" href="#" download>
+                    <i class="ri-download-2-line"></i> Download
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="uploadModal" class="hidden fixed inset-0 z-50 grid place-items-center bg-slate-900/50 p-4">
+        <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-slate-200">
+            <div class="flex items-center justify-between border-b border-slate-200 p-4">
+                <h3 class="font-bold"><i class="ri-upload-cloud-2-line"></i> Upload Compliance Document</h3>
+                <button id="closeModal" class="rounded-lg border border-slate-300 p-2"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="space-y-3 p-4">
+                <p class="text-sm text-slate-500">Attach PDF, XLSX, or CSV file for verification.</p>
+                <div id="dropZone" class="cursor-pointer rounded-xl border-2 border-dashed border-slate-300 p-8 text-center hover:border-blue-900">
+                    <input type="file" id="fileInput" accept=".pdf,.xlsx,.csv" hidden>
+                    <i class="ri-file-upload-line text-2xl text-slate-500"></i>
+                    <p class="mt-2 text-sm"><strong>Click to browse</strong> or drag file here</p>
+                </div>
+                <div id="selectedFileName" class="hidden rounded-lg bg-slate-100 p-3 text-sm">
+                    <i class="ri-file-paper-2-fill"></i>
+                    <span id="fileNameText">filename.pdf</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 border-t border-slate-200 p-4">
+                <button id="cancelUpload" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold">Cancel</button>
+                <button id="confirmUpload" class="rounded-lg bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-800">
+                    <i class="ri-check-line"></i> Submit Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="unitModal" class="hidden fixed inset-0 z-50 grid place-items-center bg-slate-900/50 p-4">
+        <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-slate-200">
+            <div class="flex items-center justify-between border-b border-slate-200 p-4">
+                <h3 id="unitModalTitle" class="font-bold"><i class="ri-user-settings-line"></i> Manage Unit</h3>
+                <button class="rounded-lg border border-slate-300 p-2" onclick="closeUnitModal()"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="p-4">
+                <form id="unitForm" class="space-y-3">
+                    <input type="hidden" id="editOriginalUsername">
+                    <div>
+                        <label class="mb-1 block text-sm font-medium">Unit Designation (Username)</label>
+                        <input type="text" id="unitName" placeholder="e.g. Finance Dept" required class="w-full rounded-lg border border-slate-300 px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-sm font-medium">Password</label>
+                        <input type="password" id="unitPassword" placeholder="Enter password" required class="w-full rounded-lg border border-slate-300 px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="mb-1 block text-sm font-medium">Access Role</label>
+                        <div class="relative">
+                            <select id="unitRole"
+                                class="w-full appearance-none rounded-lg border border-slate-300 bg-white px-3 py-2 pr-10 text-sm outline-none focus:border-blue-900 focus:ring-2 focus:ring-blue-200">
+                                <option value="unit">Compliance Unit</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                            <i
+                                class="ri-arrow-down-s-line pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="flex items-center justify-end gap-2 border-t border-slate-200 p-4">
+                <button class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold" onclick="closeUnitModal()">Cancel</button>
+                <button id="saveUnitBtn" class="rounded-lg bg-blue-950 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-900">
+                    <i class="ri-save-line"></i> Save Unit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
