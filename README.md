@@ -1,54 +1,57 @@
-# COA-Monitoring
+# COA-e OJT Project
 
-Student OJT Task Project: static monitoring dashboard + Node.js API backend + Supabase database.
+Hi, this is my OJT student project.
+I made a compliance monitoring dashboard with simple backend and database connection.
 
-## OJT Task Notes
+## What this project does
 
-For the full list of tools and technologies used in this project, see:
+- Login as admin or unit user
+- Create report tasks
+- Send reminder messages
+- Upload files for report submission
+- Show audit logs
+
+## Tech list
+
+I listed all used tools here:
 
 - [PROJECT_USED_TECH.txt](PROJECT_USED_TECH.txt)
 
-## Run Locally
+## How to run (local)
 
-1. Install dependencies:
+1. Install packages:
 
 ```bash
 npm install
 ```
 
-2. Set environment variables:
+2. Create env file:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Then fill `.env.local` with your Supabase values.
+3. Put your Supabase values inside `.env.local`.
 
-3. Create table in Supabase SQL Editor:
+4. Run SQL in Supabase:
 
-- Run `supabase/schema.sql`
+- `supabase/schema.sql`
 
-4. Start project:
+5. Start project:
 
 ```bash
 npm run dev
 ```
 
-Open the local URL shown in terminal.
-
-## Default Admin
+## Default admin account
 
 - Username: `kellie`
 - Password: `kellie2004`
 
-## Data Storage
-
-- API endpoint: `api/db.js` (`GET`/`POST`)
-- Table: `public.app_state`
-- Row used by app: `id = 1`
-
 ## Notes
 
-- Frontend works with `/api/db`.
-- Backend reads/writes a single JSON state in Supabase.
-- Use `SUPABASE_SERVICE_ROLE_KEY` only on server side.
+- Frontend calls `/api/db`
+- Backend file is `api/db.js`
+- Database table is `public.app_state`
+
+This project was prepared as a student OJT task.
